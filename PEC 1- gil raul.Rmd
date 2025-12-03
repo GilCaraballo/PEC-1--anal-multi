@@ -8,7 +8,11 @@ output:
     toc: true
     toc_depth: 3
     number_sections: true
+<<<<<<< HEAD
     theme: cerulean
+=======
+    theme: flatly
+>>>>>>> ca8c21b6b19b3193570603056f18617e74af88ca
     highlight: tango
 lang: es
 ---
@@ -34,6 +38,12 @@ str(SS.df)
 region
 sampling_sites
 
+```
+
+
+
+```{r}
+names(contents)
 
 ```
 
