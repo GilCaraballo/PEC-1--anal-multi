@@ -8,11 +8,8 @@ output:
     toc: true
     toc_depth: 3
     number_sections: true
-<<<<<<< HEAD
     theme: cerulean
-=======
     theme: flatly
->>>>>>> ca8c21b6b19b3193570603056f18617e74af88ca
     highlight: tango
 lang: es
 ---
@@ -27,8 +24,10 @@ knitr::opts_chunk$set(echo = TRUE,
 )
 ```
 
+# EJERCICIO 1
 
 ```{r}
+
 load("amanita_ponderosa.RData")
 
 ls()                # Ver qué objetos se han cargado
@@ -41,7 +40,7 @@ sampling_sites
 ```
 
 
-
+## Ejercicio 1.1
 ```{r}
 names(contents)
 
