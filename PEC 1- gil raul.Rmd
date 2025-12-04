@@ -26,6 +26,15 @@ knitr::opts_chunk$set(echo = TRUE,
 # EJERCICIO 1
 
 ```{r}
+#Pruebas de git
+# install.packages("dplyr")
+# install.packages("tidyr")
+# install.packages("ggplot2")
+# install.packages("agricolae")
+# install.packages("vegan")
+# install.packages("FactoMineR")
+# install.packages("factoextra")
+# install.packages("ca")
 
 # install.packages("dplyr")
 # install.packages("tidyr")
