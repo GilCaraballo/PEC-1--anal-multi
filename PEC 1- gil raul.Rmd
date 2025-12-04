@@ -27,6 +27,15 @@ knitr::opts_chunk$set(echo = TRUE,
 
 ```{r}
 
+# install.packages("dplyr")
+# install.packages("tidyr")
+# install.packages("ggplot2")
+# install.packages("agricolae")
+# install.packages("vegan")
+# install.packages("FactoMineR")
+# install.packages("factoextra")
+# install.packages("ca")
+
 load("amanita_ponderosa.RData")
 
 ls()
