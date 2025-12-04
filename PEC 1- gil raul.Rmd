@@ -10,16 +10,19 @@ output:
     number_sections: true
     theme: cerulean
     highlight: tango
+    code_folding: hide
 lang: es
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,
-  warning = FALSE,
-  message = FALSE,
-  fig.width = 7,
+knitr::opts_chunk$set(
+  echo       = TRUE,
+  eval       = FALSE,   # todos los demás chunks NO se evalúan
+  warning    = FALSE,
+  message    = FALSE,
+  fig.width  = 7,
   fig.height = 5,
-  fig.align = "center"
+  fig.align  = "center"
 )
 ```
 

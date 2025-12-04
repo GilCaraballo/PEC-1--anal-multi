@@ -11,7 +11,7 @@
 
 <meta name="author" content="Raul Gil" />
 
-<meta name="date" content="2025-12-03" />
+<meta name="date" content="2025-12-04" />
 
 <title>PEC 1 - entregable gil raul</title>
 
@@ -209,6 +209,83 @@ window.buildTabsets = function(tocID) {
 };
 
 </script>
+<script>
+window.initializeCodeFolding = function(show) {
+
+  // handlers for show-all and hide all
+  $("#rmd-show-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('show');
+    });
+  });
+  $("#rmd-hide-all-code").click(function() {
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('hide');
+    });
+  });
+
+  // index for unique code element ids
+  var currentIndex = 1;
+
+  // select all R code blocks
+  var rCodeBlocks = $('pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan, pre.julia, pre.foldable');
+  rCodeBlocks.each(function() {
+    // skip if the block has fold-none class
+    if ($(this).hasClass('fold-none')) return;
+
+    // create a collapsable div to wrap the code in
+    var div = $('<div class="collapse r-code-collapse"></div>');
+    var showThis = (show || $(this).hasClass('fold-show')) && !$(this).hasClass('fold-hide');
+    var id = 'rcode-643E0F36' + currentIndex++;
+    div.attr('id', id);
+    $(this).before(div);
+    $(this).detach().appendTo(div);
+
+    // add a show code button right above
+    var showCodeText = $('<span>' + (showThis ? 'Hide' : 'Show') + '</span>');
+    var showCodeButton = $('<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm code-folding-btn pull-right float-right"></button>');
+    showCodeButton.append(showCodeText);
+    showCodeButton
+        .attr('data-toggle', 'collapse')
+        .attr('data-bs-toggle', 'collapse') // BS5
+        .attr('data-target', '#' + id)
+        .attr('data-bs-target', '#' + id)   // BS5
+        .attr('aria-expanded', showThis)
+        .attr('aria-controls', id);
+
+    var buttonRow = $('<div class="row"></div>');
+    var buttonCol = $('<div class="col-md-12"></div>');
+
+    buttonCol.append(showCodeButton);
+    buttonRow.append(buttonCol);
+
+    div.before(buttonRow);
+
+    // show the div if necessary
+    if (showThis) div.collapse('show');
+
+    // update state of button on show/hide
+    //   * Change text
+    //   * add a class for intermediate states styling
+    div.on('hide.bs.collapse', function () {
+      showCodeText.text('Show');
+      showCodeButton.addClass('btn-collapsing');
+    });
+    div.on('hidden.bs.collapse', function () {
+      showCodeButton.removeClass('btn-collapsing');
+    });
+    div.on('show.bs.collapse', function () {
+      showCodeText.text('Hide');
+      showCodeButton.addClass('btn-expanding');
+    });
+    div.on('shown.bs.collapse', function () {
+      showCodeButton.removeClass('btn-expanding');
+    });
+
+  });
+
+}
+</script>
 
 <style type="text/css">
 code{white-space: pre-wrap;}
@@ -293,6 +370,15 @@ code span.st { color: #4e9a06; }
 code span.va { color: #000000; } 
 code span.vs { color: #4e9a06; } 
 code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } 
+.sourceCode .row {
+width: 100%;
+}
+.sourceCode {
+overflow-x: auto;
+}
+.code-folding-btn {
+margin-right: -30px;
+}
 </style>
 <script>
 // apply pandoc div.sourceCode style to pre.sourceCode instead
@@ -404,6 +490,9 @@ display: none;
 </style>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
 
 
 
@@ -420,12 +509,20 @@ display: none;
 
 <div id="header">
 
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
 
 
 <h1 class="title toc-ignore">PEC 1 - entregable gil raul</h1>
 <h3 class="subtitle">Subtítulo opcional</h3>
 <h4 class="author">Raul Gil</h4>
-<h4 class="date">2025-12-03</h4>
+<h4 class="date">2025-12-04</h4>
 
 </div>
 
@@ -433,84 +530,388 @@ display: none;
 <ul>
 <li><a href="#ejercicio-1" id="toc-ejercicio-1"><span class="toc-section-number">1</span> EJERCICIO 1</a>
 <ul>
-<li><a href="#ejercicio-1.1" id="toc-ejercicio-1.1"><span class="toc-section-number">1.1</span> Ejercicio 1.1</a></li>
+<li><a href="#ejercicio-1.a" id="toc-ejercicio-1.a"><span class="toc-section-number">1.1</span> Ejercicio 1.a</a></li>
+<li><a href="#ejercicio-1.b.-anova-lsd.test-y-comparaci%C3%B3n-almendres-1-vs-serpa-20" id="toc-ejercicio-1.b.-anova-lsd.test-y-comparación-almendres-1-vs-serpa-20"><span class="toc-section-number">1.2</span> Ejercicio 1.b. ANOVA + LSD.test y
+comparación Almendres (1) vs Serpa (20)</a></li>
+<li><a href="#ejercicio-1.c-estad%C3%ADsticos-robustos-para-moisture" id="toc-ejercicio-1.c-estadísticos-robustos-para-moisture"><span class="toc-section-number">1.3</span> Ejercicio 1.c Estadísticos
+robustos para Moisture</a></li>
+</ul></li>
+<li><a href="#ejercicio-2---analisis-de-componentes-principales" id="toc-ejercicio-2---analisis-de-componentes-principales"><span class="toc-section-number">2</span> EJERCICIO 2 - Analisis de
+Componentes Principales</a>
+<ul>
+<li><a href="#ejercicio-2.a" id="toc-ejercicio-2.a"><span class="toc-section-number">2.1</span> Ejercicio 2.a</a></li>
+<li><a href="#ejercicio-2.b" id="toc-ejercicio-2.b"><span class="toc-section-number">2.2</span> Ejercicio 2.b</a></li>
+<li><a href="#ejercicio-2.c" id="toc-ejercicio-2.c"><span class="toc-section-number">2.3</span> Ejercicio 2.c</a></li>
+</ul></li>
+<li><a href="#ejercicio-3---mds" id="toc-ejercicio-3---mds"><span class="toc-section-number">3</span> EJERCICIO 3 - MDS</a>
+<ul>
+<li><a href="#ejercicio-3.a-mds-con-composici%C3%B3n-mineral-de-fb-medias-por-site" id="toc-ejercicio-3.a-mds-con-composición-mineral-de-fb-medias-por-site"><span class="toc-section-number">3.1</span> Ejercicio 3.a MDS con composición
+mineral de FB (medias por site)</a></li>
+<li><a href="#ejercicio-3.b-gr%C3%A1fico-mds-en-2d-con-regiones" id="toc-ejercicio-3.b-gráfico-mds-en-2d-con-regiones"><span class="toc-section-number">3.2</span> Ejercicio 3.b Gráfico MDS en 2D
+con regiones</a></li>
+</ul></li>
+<li><a href="#ejercicio-4---analisis-de-correspondencia" id="toc-ejercicio-4---analisis-de-correspondencia"><span class="toc-section-number">4</span> EJERCICIO 4 - Analisis de
+Correspondencia</a>
+<ul>
+<li><a href="#ejercicio-4.a-medias-de-moisture-organic-minerals-por-site-y-ajuste-a-suma-100" id="toc-ejercicio-4.a-medias-de-moisture-organic-minerals-por-site-y-ajuste-a-suma-100"><span class="toc-section-number">4.1</span> Ejercicio 4.a Medias de Moisture,
+Organic, Minerals por site y ajuste a suma 100</a></li>
+<li><a href="#ejercicio-4.b-ca-sobre-las-composiciones-ajustadas" id="toc-ejercicio-4.b-ca-sobre-las-composiciones-ajustadas"><span class="toc-section-number">4.2</span> Ejercicio 4.b CA sobre las
+composiciones ajustadas</a></li>
 </ul></li>
 </ul>
 </div>
 
 <div id="ejercicio-1" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> EJERCICIO 1</h1>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;amanita_ponderosa.RData&quot;</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">ls</span>()                <span class="co"># Ver qué objetos se han cargado</span></span></code></pre></div>
-<pre><code>## [1] &quot;contents&quot;       &quot;FB.df&quot;          &quot;region&quot;         &quot;sampling_sites&quot;
-## [5] &quot;SS.df&quot;</code></pre>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">str</span>(contents)</span></code></pre></div>
-<pre><code>## &#39;data.frame&#39;:    216 obs. of  5 variables:
-##  $ moisture       : num  93.8 93.5 93.1 93.5 93.5 ...
-##  $ organic.content: num  5.63 5.73 6.27 5.82 5.84 6.31 5.94 5.42 5.59 7.05 ...
-##  $ minerals       : num  0.56 0.72 0.64 0.64 0.61 0.54 0.78 0.65 0.4 0.9 ...
-##  $ site           : int  1 1 1 1 1 1 1 1 1 2 ...
-##  $ region         : chr  &quot;Alentejo.P&quot; &quot;Alentejo.P&quot; &quot;Alentejo.P&quot; &quot;Alentejo.P&quot; ...</code></pre>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">str</span>(FB.df)</span></code></pre></div>
-<pre><code>## &#39;data.frame&#39;:    216 obs. of  15 variables:
-##  $ Ca: num  804 600 760 589 868 926 410 950 563 140 ...
-##  $ K : num  27093 27281 26494 26087 26828 ...
-##  $ Mg: num  960 910 831 867 893 428 918 711 804 203 ...
-##  $ Na: num  1365 1535 1357 1484 1351 ...
-##  $ Al: num  309 416 217 315 376 304 363 266 395 56 ...
-##  $ Cu: num  80 80 78 79 79 78 80 80 80 29 ...
-##  $ Fe: num  81 72 80 59 62 81 66 42 54 21 ...
-##  $ P : num  356 296 331 320 301 306 333 327 365 3 ...
-##  $ Ag: num  3.14 2.07 2.38 2.9 1.53 3.25 2.28 2.08 2.68 6.7 ...
-##  $ Ba: num  5.36 2.16 1.26 2.75 4.19 2.6 3.56 4.17 1.01 0.8 ...
-##  $ Cd: num  2.68 1.79 2.15 4 2.4 2.85 1.41 2.54 2.1 0.31 ...
-##  $ Cr: num  1.16 1.63 0.4 2.13 2.67 1.04 1.61 2.53 0.77 0.78 ...
-##  $ Mn: num  27.5 30.7 23.4 33.5 29.8 41.5 26.1 16.2 35 4.3 ...
-##  $ Pb: num  0.7 1.5 0.22 2.02 1.41 0.6 1.26 0.66 1.69 0.46 ...
-##  $ Zn: num  58.4 59.2 58 58.9 58.1 ...</code></pre>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">str</span>(SS.df)</span></code></pre></div>
-<pre><code>## &#39;data.frame&#39;:    216 obs. of  15 variables:
-##  $ Ca: num  110 96 105 116 98 102 93 110 111 99 ...
-##  $ K : num  369 352 364 355 363 ...
-##  $ Mg: num  279 292 276 262 304 291 278 258 313 320 ...
-##  $ Na: num  73 70 71 71 69 70 68 69 71 77 ...
-##  $ Al: num  261 273 264 260 277 282 271 266 272 273 ...
-##  $ Cu: num  1 1 1 1 1 1 1 1 1 2 ...
-##  $ Fe: num  1404 1612 1600 1400 1490 ...
-##  $ P : num  73 74 74 69 71 73 72 68 70 75 ...
-##  $ Ag: num  0.1 0.09 0.11 0.11 0.11 0.09 0.12 0.11 0.11 0.1 ...
-##  $ Ba: num  1.64 1.98 2.06 1.59 1.94 2.23 2.09 2.07 2.43 1.64 ...
-##  $ Cd: num  0.29 0.31 0.31 0.29 0.28 0.31 0.3 0.32 0.3 0.05 ...
-##  $ Cr: num  0.99 0.65 0.84 0.72 1.57 0.74 1.12 1.27 0.94 0.77 ...
-##  $ Mn: num  22.4 21.9 21.1 24 22.2 ...
-##  $ Pb: num  4 3.89 4.38 3.87 4.11 4.02 4 3.61 4.06 8.14 ...
-##  $ Zn: num  4 4 4 4.01 4 4.01 3.99 4.02 3.99 3.27 ...</code></pre>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>region</span></code></pre></div>
-<pre><code>##  [1] Alentejo.P    Alentejo.P    Alentejo.P    Alentejo.P    Alentejo.P   
-##  [6] Andaluzia.S   Alentejo.P    Alentejo.P    Alentejo.P    Alentejo.P   
-## [11] Alentejo.P    Alentejo.P    Alentejo.P    Alentejo.P    Alentejo.P   
-## [16] Alentejo.P    Andaluzia.S   Alentejo.P    Alentejo.P    Alentejo.P   
-## [21] Alentejo.P    Alentejo.P    Alentejo.P    Extremadura.S
-## Levels: Alentejo.P Andaluzia.S Extremadura.S</code></pre>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>sampling_sites</span></code></pre></div>
-<pre><code>##  [1] &quot;Almendres&quot;                 &quot;Azaruja&quot;                  
-##  [3] &quot;Baleizão&quot;                  &quot;Beja&quot;                     
-##  [5] &quot;Cabeça Gorda&quot;              &quot;Cabezas Rubias&quot;           
-##  [7] &quot;Évora&quot;                     &quot;Evoramonte&quot;               
-##  [9] &quot;Herde da Mitra&quot;            &quot;Mértola&quot;                  
-## [11] &quot;Mina S. Domingos&quot;          &quot;Mte da Borralha&quot;          
-## [13] &quot;Mte Novo&quot;                  &quot;Montejuntos&quot;              
-## [15] &quot;N. Sra Guadalupe&quot;          &quot;N. Sra Machede&quot;           
-## [17] &quot;Rosal de la Frontera&quot;      &quot;Sto Aleixo da Restauração&quot;
-## [19] &quot;S. Miguel de Machede&quot;      &quot;Serpa&quot;                    
-## [21] &quot;Ve Rocins&quot;                 &quot;Valverde&quot;                 
-## [23] &quot;V. N. S. Bento&quot;            &quot;Villanueva del Fresno&quot;</code></pre>
-<div id="ejercicio-1.1" class="section level2" number="1.1">
-<h2><span class="header-section-number">1.1</span> Ejercicio 1.1</h2>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="fu">names</span>(contents)</span></code></pre></div>
-<pre><code>## [1] &quot;moisture&quot;        &quot;organic.content&quot; &quot;minerals&quot;        &quot;site&quot;           
-## [5] &quot;region&quot;</code></pre>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co">#Pruebas de git</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="co"># install.packages(&quot;dplyr&quot;)</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co"># install.packages(&quot;tidyr&quot;)</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co"># install.packages(&quot;ggplot2&quot;)</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co"># install.packages(&quot;agricolae&quot;)</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co"># install.packages(&quot;vegan&quot;)</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co"># install.packages(&quot;FactoMineR&quot;)</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="co"># install.packages(&quot;factoextra&quot;)</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="co"># install.packages(&quot;ca&quot;)</span></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="co"># install.packages(&quot;dplyr&quot;)</span></span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="co"># install.packages(&quot;tidyr&quot;)</span></span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="co"># install.packages(&quot;ggplot2&quot;)</span></span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a><span class="co"># install.packages(&quot;agricolae&quot;)</span></span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a><span class="co"># install.packages(&quot;vegan&quot;)</span></span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a><span class="co"># install.packages(&quot;FactoMineR&quot;)</span></span>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a><span class="co"># install.packages(&quot;factoextra&quot;)</span></span>
+<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a><span class="co"># install.packages(&quot;ca&quot;)</span></span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;amanita_ponderosa.RData&quot;</span>)</span>
+<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a><span class="fu">ls</span>()</span>
+<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a><span class="fu">str</span>(contents)</span>
+<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a><span class="fu">str</span>(FB.df)</span>
+<span id="cb1-25"><a href="#cb1-25" tabindex="-1"></a><span class="fu">str</span>(SS.df)</span>
+<span id="cb1-26"><a href="#cb1-26" tabindex="-1"></a>region</span>
+<span id="cb1-27"><a href="#cb1-27" tabindex="-1"></a>sampling_sites</span></code></pre></div>
+<div id="ejercicio-1.a" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> Ejercicio 1.a</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">names</span>(contents)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co"># Medias y desviaciones estándar por &#39;site&#39; para Moisture, Organic y Minerals</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>tab2_stats <span class="ot">&lt;-</span> composition.df <span class="sc">%&gt;%</span> </span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>  <span class="fu">group_by</span>(site) <span class="sc">%&gt;%</span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>    <span class="fu">across</span>(</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>      <span class="fu">all_of</span>(macro_vars),</span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>      <span class="fu">list</span>(</span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>        <span class="at">mean =</span> <span class="sc">~</span><span class="fu">mean</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>        <span class="at">sd   =</span> <span class="sc">~</span><span class="fu">sd</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a>      ),</span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a>      <span class="at">.names =</span> <span class="st">&quot;{.col}_{.fn}&quot;</span></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a>    )</span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a>  )</span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a><span class="co"># Ver las primeras filas</span></span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a><span class="fu">head</span>(tab2_stats)</span>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a><span class="co"># Versión compacta: &quot;media ± sd&quot; en la misma columna</span></span>
+<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a>tab2_compact <span class="ot">&lt;-</span> composition.df <span class="sc">%&gt;%</span></span>
+<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a>  <span class="fu">group_by</span>(site) <span class="sc">%&gt;%</span></span>
+<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a>    <span class="fu">across</span>(</span>
+<span id="cb2-25"><a href="#cb2-25" tabindex="-1"></a>      <span class="fu">all_of</span>(macro_vars),</span>
+<span id="cb2-26"><a href="#cb2-26" tabindex="-1"></a>      <span class="fu">list</span>(</span>
+<span id="cb2-27"><a href="#cb2-27" tabindex="-1"></a>        <span class="at">mean =</span> <span class="sc">~</span><span class="fu">mean</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb2-28"><a href="#cb2-28" tabindex="-1"></a>        <span class="at">sd   =</span> <span class="sc">~</span><span class="fu">sd</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-29"><a href="#cb2-29" tabindex="-1"></a>      ),</span>
+<span id="cb2-30"><a href="#cb2-30" tabindex="-1"></a>      <span class="at">.names =</span> <span class="st">&quot;{.col}_{.fn}&quot;</span></span>
+<span id="cb2-31"><a href="#cb2-31" tabindex="-1"></a>    )</span>
+<span id="cb2-32"><a href="#cb2-32" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb2-33"><a href="#cb2-33" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb2-34"><a href="#cb2-34" tabindex="-1"></a>    <span class="at">Moisture =</span> <span class="fu">sprintf</span>(<span class="st">&quot;%.2f ± %.2f&quot;</span>, Moisture_mean, Moisture_sd),</span>
+<span id="cb2-35"><a href="#cb2-35" tabindex="-1"></a>    <span class="at">Organic  =</span> <span class="fu">sprintf</span>(<span class="st">&quot;%.2f ± %.2f&quot;</span>, Organic_mean,  Organic_sd),</span>
+<span id="cb2-36"><a href="#cb2-36" tabindex="-1"></a>    <span class="at">Minerals =</span> <span class="fu">sprintf</span>(<span class="st">&quot;%.2f ± %.2f&quot;</span>, Minerals_mean, Minerals_sd)</span>
+<span id="cb2-37"><a href="#cb2-37" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb2-38"><a href="#cb2-38" tabindex="-1"></a>  <span class="fu">select</span>(site, <span class="fu">all_of</span>(macro_vars))</span>
+<span id="cb2-39"><a href="#cb2-39" tabindex="-1"></a></span>
+<span id="cb2-40"><a href="#cb2-40" tabindex="-1"></a><span class="fu">head</span>(tab2_compact)</span>
+<span id="cb2-41"><a href="#cb2-41" tabindex="-1"></a></span>
+<span id="cb2-42"><a href="#cb2-42" tabindex="-1"></a><span class="co"># Estadísticos tipo figura 2 (ejemplo con minerales en FB)</span></span>
+<span id="cb2-43"><a href="#cb2-43" tabindex="-1"></a>fig2_stats <span class="ot">&lt;-</span> FB.df <span class="sc">%&gt;%</span></span>
+<span id="cb2-44"><a href="#cb2-44" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb2-45"><a href="#cb2-45" tabindex="-1"></a>    <span class="fu">across</span>(</span>
+<span id="cb2-46"><a href="#cb2-46" tabindex="-1"></a>      <span class="fu">all_of</span>(mineral_vars),</span>
+<span id="cb2-47"><a href="#cb2-47" tabindex="-1"></a>      <span class="fu">list</span>(</span>
+<span id="cb2-48"><a href="#cb2-48" tabindex="-1"></a>        <span class="at">mean   =</span> <span class="sc">~</span><span class="fu">mean</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb2-49"><a href="#cb2-49" tabindex="-1"></a>        <span class="at">sd     =</span> <span class="sc">~</span><span class="fu">sd</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb2-50"><a href="#cb2-50" tabindex="-1"></a>        <span class="at">median =</span> <span class="sc">~</span><span class="fu">median</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb2-51"><a href="#cb2-51" tabindex="-1"></a>        <span class="at">IQR    =</span> <span class="sc">~</span><span class="fu">IQR</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-52"><a href="#cb2-52" tabindex="-1"></a>      ),</span>
+<span id="cb2-53"><a href="#cb2-53" tabindex="-1"></a>      <span class="at">.names =</span> <span class="st">&quot;{.col}_{.fn}&quot;</span></span>
+<span id="cb2-54"><a href="#cb2-54" tabindex="-1"></a>    )</span>
+<span id="cb2-55"><a href="#cb2-55" tabindex="-1"></a>  )</span>
+<span id="cb2-56"><a href="#cb2-56" tabindex="-1"></a></span>
+<span id="cb2-57"><a href="#cb2-57" tabindex="-1"></a>fig2_stats  <span class="co"># puedes inspeccionar este objeto en la consola</span></span></code></pre></div>
+</div>
+<div id="ejercicio-1.b.-anova-lsd.test-y-comparación-almendres-1-vs-serpa-20" class="section level2" number="1.2">
+<h2><span class="header-section-number">1.2</span> Ejercicio 1.b. ANOVA
++ LSD.test y comparación Almendres (1) vs Serpa (20)</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># ANOVA para Moisture ~ site</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>anova_moist <span class="ot">&lt;-</span> <span class="fu">aov</span>(Moisture <span class="sc">~</span> site, <span class="at">data =</span> composition.df)</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="fu">summary</span>(anova_moist)</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co"># Comparación múltiple LSD</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>lsd_moist <span class="ot">&lt;-</span> agricolae<span class="sc">::</span><span class="fu">LSD.test</span>(anova_moist, <span class="st">&quot;site&quot;</span>, <span class="at">group =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co"># Grupos de sites (con letras a, b, c, ...)</span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>lsd_moist<span class="sc">$</span>groups</span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co"># Comprobar si Almendres (1) y Serpa (20) están en el mismo grupo</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>grupos <span class="ot">&lt;-</span> lsd_moist<span class="sc">$</span>groups</span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>grupos[<span class="st">&quot;1&quot;</span>, ]   <span class="co"># información para site 1</span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>grupos[<span class="st">&quot;20&quot;</span>, ]  <span class="co"># información para site 20</span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a>same_group <span class="ot">&lt;-</span> grupos[<span class="st">&quot;1&quot;</span>, <span class="st">&quot;groups&quot;</span>] <span class="sc">==</span> grupos[<span class="st">&quot;20&quot;</span>, <span class="st">&quot;groups&quot;</span>]</span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a>same_group   <span class="co"># TRUE = similares (no difieren), FALSE = distintos</span></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="co"># (Opcional) Repetir el análisis ANOVA + LSD para Organic y Minerals</span></span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a><span class="cf">for</span> (var <span class="cf">in</span> macro_vars) {</span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">&quot;</span><span class="sc">\n\n</span><span class="st">### Variable:&quot;</span>, var, <span class="st">&quot;###</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a>  f <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="fu">paste</span>(var, <span class="st">&quot;~ site&quot;</span>))</span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a>  aov_obj <span class="ot">&lt;-</span> <span class="fu">aov</span>(f, <span class="at">data =</span> composition.df)</span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">summary</span>(aov_obj))</span>
+<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a>  </span>
+<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a>  lsd_obj <span class="ot">&lt;-</span> agricolae<span class="sc">::</span><span class="fu">LSD.test</span>(aov_obj, <span class="st">&quot;site&quot;</span>, <span class="at">group =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">head</span>(lsd_obj<span class="sc">$</span>groups))</span>
+<span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a>}</span></code></pre></div>
+</div>
+<div id="ejercicio-1.c-estadísticos-robustos-para-moisture" class="section level2" number="1.3">
+<h2><span class="header-section-number">1.3</span> Ejercicio 1.c
+Estadísticos robustos para Moisture</h2>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>moist <span class="ot">&lt;-</span> composition.df<span class="sc">$</span>Moisture</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>median_moist <span class="ot">&lt;-</span> <span class="fu">median</span>(moist, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>iqr_moist    <span class="ot">&lt;-</span> <span class="fu">IQR</span>(moist, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>mad_moist    <span class="ot">&lt;-</span> <span class="fu">mad</span>(moist, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)         <span class="co"># desviación absoluta mediana</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>trimmed_mean <span class="ot">&lt;-</span> <span class="fu">mean</span>(moist, <span class="at">trim =</span> <span class="fl">0.1</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)  <span class="co"># media recortada 10%</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>median_moist</span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>iqr_moist</span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>mad_moist</span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>trimmed_mean</span></code></pre></div>
+<p>##Ejercicio 1.d Boxplot múltiple en escala logarítmica (log10)</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Pasar de formato ancho a largo para los minerales de FB</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>FB_long <span class="ot">&lt;-</span> FB.df <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">all_of</span>(mineral_vars),</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">&quot;Element&quot;</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">&quot;Concentration&quot;</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>  )</span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co"># Boxplot múltiple con eje Y en log10</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="fu">ggplot</span>(FB_long, <span class="fu">aes</span>(<span class="at">x =</span> Element, <span class="at">y =</span> Concentration)) <span class="sc">+</span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a>  <span class="fu">scale_y_log10</span>() <span class="sc">+</span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Elemento&quot;</span>,</span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Concentración (log10)&quot;</span>,</span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;Boxplots múltiples de la composición mineral en FB (log10)&quot;</span></span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code></pre></div>
+</div>
+</div>
+<div id="ejercicio-2---analisis-de-componentes-principales" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> EJERCICIO 2 - Analisis
+de Componentes Principales</h1>
+<div id="ejercicio-2.a" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Ejercicio 2.a</h2>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># Calcular medias de minerales en FB por site</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>FB_means <span class="ot">&lt;-</span> FB.df <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="fu">group_by</span>(site) <span class="sc">%&gt;%</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">all_of</span>(mineral_vars), <span class="sc">~</span><span class="fu">mean</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>  )</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="fu">head</span>(FB_means)</span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="co"># PCA (centrado y escalado)</span></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>FB_pca <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(FB_means[, mineral_vars], <span class="at">scale. =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="fu">summary</span>(FB_pca)  <span class="co"># varianza explicada</span></span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="co"># Biplot (variables + sites)</span></span>
+<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a><span class="fu">fviz_pca_biplot</span>(FB_pca,</span>
+<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a>                <span class="at">repel =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a>                <span class="at">label =</span> <span class="st">&quot;var&quot;</span>,</span>
+<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a>                <span class="at">geom.ind =</span> <span class="st">&quot;point&quot;</span>) <span class="sc">+</span></span>
+<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;PCA – Medias de composición mineral en FB por site&quot;</span>)</span>
+<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a></span>
+<span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a><span class="co"># Gráfico solo de individuos (sites)</span></span>
+<span id="cb6-23"><a href="#cb6-23" tabindex="-1"></a>FB_means<span class="sc">$</span>site <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(FB_means<span class="sc">$</span>site)</span>
+<span id="cb6-24"><a href="#cb6-24" tabindex="-1"></a></span>
+<span id="cb6-25"><a href="#cb6-25" tabindex="-1"></a><span class="fu">fviz_pca_ind</span>(FB_pca,</span>
+<span id="cb6-26"><a href="#cb6-26" tabindex="-1"></a>             <span class="at">geom =</span> <span class="st">&quot;point&quot;</span>,</span>
+<span id="cb6-27"><a href="#cb6-27" tabindex="-1"></a>             <span class="at">habillage =</span> FB_means<span class="sc">$</span>site,</span>
+<span id="cb6-28"><a href="#cb6-28" tabindex="-1"></a>             <span class="at">repel =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb6-29"><a href="#cb6-29" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;PCA de FB – sites&quot;</span>)</span></code></pre></div>
+</div>
+<div id="ejercicio-2.b" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> Ejercicio 2.b</h2>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>SS_means <span class="ot">&lt;-</span> SS.df <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="fu">group_by</span>(site) <span class="sc">%&gt;%</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">all_of</span>(mineral_vars), <span class="sc">~</span><span class="fu">mean</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>  )</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="fu">head</span>(SS_means)</span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>SS_pca <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(SS_means[, mineral_vars], <span class="at">scale. =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="fu">summary</span>(SS_pca)</span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="fu">fviz_pca_biplot</span>(SS_pca,</span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a>                <span class="at">repel =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a>                <span class="at">label =</span> <span class="st">&quot;var&quot;</span>) <span class="sc">+</span></span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;PCA – Medias de composición mineral en SS por site&quot;</span>)</span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a></span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a>SS_means<span class="sc">$</span>site <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(SS_means<span class="sc">$</span>site)</span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a><span class="fu">fviz_pca_ind</span>(SS_pca,</span>
+<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a>             <span class="at">geom =</span> <span class="st">&quot;point&quot;</span>,</span>
+<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a>             <span class="at">habillage =</span> SS_means<span class="sc">$</span>site,</span>
+<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a>             <span class="at">repel =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;PCA de SS – sites&quot;</span>)</span></code></pre></div>
+</div>
+<div id="ejercicio-2.c" class="section level2" number="2.3">
+<h2><span class="header-section-number">2.3</span> Ejercicio 2.c</h2>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co"># Unir medias de FB y SS por site</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>FB_SS_join <span class="ot">&lt;-</span> FB_means <span class="sc">%&gt;%</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="fu">inner_join</span>(SS_means, <span class="at">by =</span> <span class="st">&quot;site&quot;</span>, <span class="at">suffix =</span> <span class="fu">c</span>(<span class="st">&quot;.FB&quot;</span>, <span class="st">&quot;.SS&quot;</span>))</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co"># Calcular log-ratio FB/SS para cada mineral</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>BCF_log <span class="ot">&lt;-</span> FB_SS_join <span class="sc">%&gt;%</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>  <span class="fu">transmute</span>(</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>    site,</span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>    <span class="fu">across</span>(</span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>      <span class="fu">all_of</span>(mineral_vars),</span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>      <span class="sc">~</span> <span class="fu">log</span>(.data[<span class="fu">paste0</span>(<span class="fu">cur_column</span>(), <span class="st">&quot;.FB&quot;</span>)] <span class="sc">/</span></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>             .data[<span class="fu">paste0</span>(<span class="fu">cur_column</span>(), <span class="st">&quot;.SS&quot;</span>)]),</span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>      <span class="at">.names =</span> <span class="st">&quot;{.col}&quot;</span></span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a>    )</span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a>  )</span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a><span class="fu">head</span>(BCF_log)</span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a></span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a><span class="co"># PCA de los log-ratios</span></span>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a>BCF_pca <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(BCF_log[, mineral_vars], <span class="at">scale. =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a></span>
+<span id="cb8-22"><a href="#cb8-22" tabindex="-1"></a><span class="fu">summary</span>(BCF_pca)</span>
+<span id="cb8-23"><a href="#cb8-23" tabindex="-1"></a></span>
+<span id="cb8-24"><a href="#cb8-24" tabindex="-1"></a><span class="fu">fviz_pca_biplot</span>(BCF_pca,</span>
+<span id="cb8-25"><a href="#cb8-25" tabindex="-1"></a>                <span class="at">repel =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb8-26"><a href="#cb8-26" tabindex="-1"></a>                <span class="at">label =</span> <span class="st">&quot;var&quot;</span>) <span class="sc">+</span></span>
+<span id="cb8-27"><a href="#cb8-27" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;PCA – log-ratios FB/SS (BCF) por site&quot;</span>)</span>
+<span id="cb8-28"><a href="#cb8-28" tabindex="-1"></a></span>
+<span id="cb8-29"><a href="#cb8-29" tabindex="-1"></a>BCF_log<span class="sc">$</span>site <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(BCF_log<span class="sc">$</span>site)</span>
+<span id="cb8-30"><a href="#cb8-30" tabindex="-1"></a></span>
+<span id="cb8-31"><a href="#cb8-31" tabindex="-1"></a><span class="fu">fviz_pca_ind</span>(BCF_pca,</span>
+<span id="cb8-32"><a href="#cb8-32" tabindex="-1"></a>             <span class="at">geom =</span> <span class="st">&quot;point&quot;</span>,</span>
+<span id="cb8-33"><a href="#cb8-33" tabindex="-1"></a>             <span class="at">habillage =</span> BCF_log<span class="sc">$</span>site,</span>
+<span id="cb8-34"><a href="#cb8-34" tabindex="-1"></a>             <span class="at">repel =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb8-35"><a href="#cb8-35" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;PCA de BCF – sites&quot;</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="ejercicio-3---mds" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> EJERCICIO 3 - MDS</h1>
+<div id="ejercicio-3.a-mds-con-composición-mineral-de-fb-medias-por-site" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Ejercicio 3.a MDS con
+composición mineral de FB (medias por site)</h2>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># Usamos FB_means (ya calculado) y solo las columnas de minerales</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>FB_means_only <span class="ot">&lt;-</span> FB_means[, mineral_vars]</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co"># Distancia de Bray-Curtis</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>fb_dist <span class="ot">&lt;-</span> <span class="fu">vegdist</span>(FB_means_only, <span class="at">method =</span> <span class="st">&quot;bray&quot;</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co"># MDS no métrico (metaMDS)</span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>fb_mds <span class="ot">&lt;-</span> <span class="fu">metaMDS</span>(fb_dist, <span class="at">k =</span> <span class="dv">2</span>, <span class="at">trymax =</span> <span class="dv">100</span>)</span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a>fb_mds  <span class="co"># resumen del ajuste</span></span></code></pre></div>
+</div>
+<div id="ejercicio-3.b-gráfico-mds-en-2d-con-regiones" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> Ejercicio 3.b Gráfico
+MDS en 2D con regiones</h2>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co"># Suponemos que &#39;composition.df&#39; tiene columna &#39;Region&#39;</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="co"># Si se llama distinto, cámbialo aquí.</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>site_region <span class="ot">&lt;-</span> composition.df <span class="sc">%&gt;%</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>  <span class="fu">group_by</span>(site) <span class="sc">%&gt;%</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Region =</span> <span class="fu">first</span>(Region))</span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="co"># Extraer coordenadas del MDS</span></span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a>mds_scores <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">scores</span>(fb_mds, <span class="at">display =</span> <span class="st">&quot;sites&quot;</span>))</span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a>mds_scores<span class="sc">$</span>site <span class="ot">&lt;-</span> FB_means<span class="sc">$</span>site</span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a><span class="co"># Añadir info de región</span></span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a>mds_plot_data <span class="ot">&lt;-</span> mds_scores <span class="sc">%&gt;%</span></span>
+<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a>  <span class="fu">left_join</span>(site_region, <span class="at">by =</span> <span class="st">&quot;site&quot;</span>)</span>
+<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a><span class="fu">ggplot</span>(mds_plot_data, <span class="fu">aes</span>(<span class="at">x =</span> MDS1, <span class="at">y =</span> MDS2, <span class="at">color =</span> Region, <span class="at">label =</span> site)) <span class="sc">+</span></span>
+<span id="cb10-16"><a href="#cb10-16" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb10-17"><a href="#cb10-17" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">vjust =</span> <span class="sc">-</span><span class="fl">0.5</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb10-18"><a href="#cb10-18" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb10-19"><a href="#cb10-19" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb10-20"><a href="#cb10-20" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">&quot;MDS (Bray–Curtis) de composición mineral en FB&quot;</span>,</span>
+<span id="cb10-21"><a href="#cb10-21" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">&quot;Dimensión 1&quot;</span>,</span>
+<span id="cb10-22"><a href="#cb10-22" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">&quot;Dimensión 2&quot;</span></span>
+<span id="cb10-23"><a href="#cb10-23" tabindex="-1"></a>  )</span></code></pre></div>
+</div>
+</div>
+<div id="ejercicio-4---analisis-de-correspondencia" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> EJERCICIO 4 - Analisis
+de Correspondencia</h1>
+<div id="ejercicio-4.a-medias-de-moisture-organic-minerals-por-site-y-ajuste-a-suma-100" class="section level2" number="4.1">
+<h2><span class="header-section-number">4.1</span> Ejercicio 4.a Medias
+de Moisture, Organic, Minerals por site y ajuste a suma 100</h2>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>comp_means <span class="ot">&lt;-</span> composition.df <span class="sc">%&gt;%</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  <span class="fu">group_by</span>(site) <span class="sc">%&gt;%</span></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">all_of</span>(macro_vars), <span class="sc">~</span><span class="fu">mean</span>(.x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>  )</span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a><span class="co"># Ajustar cada fila para que Moisture + Organic + Minerals = 100</span></span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>comp_adj <span class="ot">&lt;-</span> comp_means <span class="sc">%&gt;%</span></span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a>  <span class="fu">rowwise</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a>    <span class="at">total =</span> <span class="fu">sum</span>(<span class="fu">c_across</span>(<span class="fu">all_of</span>(macro_vars)), <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a>    <span class="at">Moisture =</span> Moisture <span class="sc">/</span> total <span class="sc">*</span> <span class="dv">100</span>,</span>
+<span id="cb11-13"><a href="#cb11-13" tabindex="-1"></a>    <span class="at">Organic  =</span> Organic  <span class="sc">/</span> total <span class="sc">*</span> <span class="dv">100</span>,</span>
+<span id="cb11-14"><a href="#cb11-14" tabindex="-1"></a>    <span class="at">Minerals =</span> Minerals <span class="sc">/</span> total <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb11-15"><a href="#cb11-15" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb11-16"><a href="#cb11-16" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb11-17"><a href="#cb11-17" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>total)</span>
+<span id="cb11-18"><a href="#cb11-18" tabindex="-1"></a></span>
+<span id="cb11-19"><a href="#cb11-19" tabindex="-1"></a><span class="fu">head</span>(comp_adj)</span></code></pre></div>
+</div>
+<div id="ejercicio-4.b-ca-sobre-las-composiciones-ajustadas" class="section level2" number="4.2">
+<h2><span class="header-section-number">4.2</span> Ejercicio 4.b CA
+sobre las composiciones ajustadas</h2>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="co"># Matriz sites x componentes</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>comp_mat <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(comp_adj)</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="fu">rownames</span>(comp_mat) <span class="ot">&lt;-</span> comp_mat<span class="sc">$</span>site</span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>comp_mat <span class="ot">&lt;-</span> comp_mat[, macro_vars]</span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a><span class="co"># Opción 1: paquete &#39;ca&#39;</span></span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>ca_res <span class="ot">&lt;-</span> <span class="fu">ca</span>(comp_mat)</span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a><span class="fu">summary</span>(ca_res)</span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a><span class="fu">plot</span>(ca_res,</span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">&quot;CA – Composición en peso fresco de FB (Moisture, Organic, Minerals)&quot;</span>)</span>
+<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a><span class="co"># Opción 2: FactoMineR + factoextra (por si prefieres estos gráficos)</span></span>
+<span id="cb12-14"><a href="#cb12-14" tabindex="-1"></a>CA_res <span class="ot">&lt;-</span> FactoMineR<span class="sc">::</span><span class="fu">CA</span>(comp_mat, <span class="at">graph =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb12-15"><a href="#cb12-15" tabindex="-1"></a></span>
+<span id="cb12-16"><a href="#cb12-16" tabindex="-1"></a><span class="fu">fviz_ca_biplot</span>(CA_res,</span>
+<span id="cb12-17"><a href="#cb12-17" tabindex="-1"></a>               <span class="at">repel =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb12-18"><a href="#cb12-18" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;CA – Biplot sites x componentes (Moisture, Organic, Minerals)&quot;</span>)</span></code></pre></div>
 </div>
 </div>
 
@@ -547,6 +948,11 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
