@@ -39,9 +39,397 @@ sampling_sites
 ```
 
 
-## Ejercicio 1.1
+## Ejercicio 1.a
 ```{r}
 names(contents)
 
+# Medias y desviaciones estándar por 'site' para Moisture, Organic y Minerals
+tab2_stats <- composition.df %>% 
+  group_by(site) %>%
+  summarise(
+    across(
+      all_of(macro_vars),
+      list(
+        mean = ~mean(.x, na.rm = TRUE),
+        sd   = ~sd(.x, na.rm = TRUE)
+      ),
+      .names = "{.col}_{.fn}"
+    )
+  )
+
+# Ver las primeras filas
+head(tab2_stats)
+
+# Versión compacta: "media ± sd" en la misma columna
+tab2_compact <- composition.df %>%
+  group_by(site) %>%
+  summarise(
+    across(
+      all_of(macro_vars),
+      list(
+        mean = ~mean(.x, na.rm = TRUE),
+        sd   = ~sd(.x, na.rm = TRUE)
+      ),
+      .names = "{.col}_{.fn}"
+    )
+  ) %>%
+  mutate(
+    Moisture = sprintf("%.2f ± %.2f", Moisture_mean, Moisture_sd),
+    Organic  = sprintf("%.2f ± %.2f", Organic_mean,  Organic_sd),
+    Minerals = sprintf("%.2f ± %.2f", Minerals_mean, Minerals_sd)
+  ) %>%
+  select(site, all_of(macro_vars))
+
+head(tab2_compact)
+
+# Estadísticos tipo figura 2 (ejemplo con minerales en FB)
+fig2_stats <- FB.df %>%
+  summarise(
+    across(
+      all_of(mineral_vars),
+      list(
+        mean   = ~mean(.x, na.rm = TRUE),
+        sd     = ~sd(.x, na.rm = TRUE),
+        median = ~median(.x, na.rm = TRUE),
+        IQR    = ~IQR(.x, na.rm = TRUE)
+      ),
+      .names = "{.col}_{.fn}"
+    )
+  )
+
+fig2_stats  # puedes inspeccionar este objeto en la consola
+
+
 ```
+
+## Ejercicio 1.b. ANOVA + LSD.test y comparación Almendres (1) vs Serpa (20)
+
+```{r}
+# ANOVA para Moisture ~ site
+anova_moist <- aov(Moisture ~ site, data = composition.df)
+summary(anova_moist)
+
+# Comparación múltiple LSD
+lsd_moist <- agricolae::LSD.test(anova_moist, "site", group = TRUE)
+
+# Grupos de sites (con letras a, b, c, ...)
+lsd_moist$groups
+
+# Comprobar si Almendres (1) y Serpa (20) están en el mismo grupo
+grupos <- lsd_moist$groups
+
+grupos["1", ]   # información para site 1
+grupos["20", ]  # información para site 20
+
+same_group <- grupos["1", "groups"] == grupos["20", "groups"]
+same_group   # TRUE = similares (no difieren), FALSE = distintos
+
+# (Opcional) Repetir el análisis ANOVA + LSD para Organic y Minerals
+for (var in macro_vars) {
+  cat("\n\n### Variable:", var, "###\n")
+  f <- as.formula(paste(var, "~ site"))
+  aov_obj <- aov(f, data = composition.df)
+  print(summary(aov_obj))
+  
+  lsd_obj <- agricolae::LSD.test(aov_obj, "site", group = TRUE)
+  print(head(lsd_obj$groups))
+}
+```
+
+
+## Ejercicio 1.c Estadísticos robustos para Moisture
+
+```{r}
+moist <- composition.df$Moisture
+
+median_moist <- median(moist, na.rm = TRUE)
+iqr_moist    <- IQR(moist, na.rm = TRUE)
+mad_moist    <- mad(moist, na.rm = TRUE)         # desviación absoluta mediana
+trimmed_mean <- mean(moist, trim = 0.1, na.rm = TRUE)  # media recortada 10%
+
+median_moist
+iqr_moist
+mad_moist
+trimmed_mean
+```
+
+
+##Ejercicio 1.d Boxplot múltiple en escala logarítmica (log10)
+
+```{r}
+# Pasar de formato ancho a largo para los minerales de FB
+FB_long <- FB.df %>%
+  pivot_longer(
+    cols = all_of(mineral_vars),
+    names_to = "Element",
+    values_to = "Concentration"
+  )
+
+# Boxplot múltiple con eje Y en log10
+ggplot(FB_long, aes(x = Element, y = Concentration)) +
+  geom_boxplot() +
+  scale_y_log10() +
+  labs(
+    x = "Elemento",
+    y = "Concentración (log10)",
+    title = "Boxplots múltiples de la composición mineral en FB (log10)"
+  ) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+
+# EJERCICIO 2 - Analisis de Componentes Principales
+
+```{r}
+
+```
+
+
+## Ejercicio 2.a
+
+```{r}
+# Calcular medias de minerales en FB por site
+FB_means <- FB.df %>%
+  group_by(site) %>%
+  summarise(
+    across(all_of(mineral_vars), ~mean(.x, na.rm = TRUE))
+  )
+
+head(FB_means)
+
+# PCA (centrado y escalado)
+FB_pca <- prcomp(FB_means[, mineral_vars], scale. = TRUE)
+
+summary(FB_pca)  # varianza explicada
+
+# Biplot (variables + sites)
+fviz_pca_biplot(FB_pca,
+                repel = TRUE,
+                label = "var",
+                geom.ind = "point") +
+  ggtitle("PCA – Medias de composición mineral en FB por site")
+
+# Gráfico solo de individuos (sites)
+FB_means$site <- as.factor(FB_means$site)
+
+fviz_pca_ind(FB_pca,
+             geom = "point",
+             habillage = FB_means$site,
+             repel = TRUE) +
+  ggtitle("PCA de FB – sites")
+```
+
+
+## Ejercicio 2.b
+
+```{r}
+SS_means <- SS.df %>%
+  group_by(site) %>%
+  summarise(
+    across(all_of(mineral_vars), ~mean(.x, na.rm = TRUE))
+  )
+
+head(SS_means)
+
+SS_pca <- prcomp(SS_means[, mineral_vars], scale. = TRUE)
+
+summary(SS_pca)
+
+fviz_pca_biplot(SS_pca,
+                repel = TRUE,
+                label = "var") +
+  ggtitle("PCA – Medias de composición mineral en SS por site")
+
+SS_means$site <- as.factor(SS_means$site)
+
+fviz_pca_ind(SS_pca,
+             geom = "point",
+             habillage = SS_means$site,
+             repel = TRUE) +
+  ggtitle("PCA de SS – sites")
+```
+
+
+## Ejercicio 2.c
+
+```{r}
+# Unir medias de FB y SS por site
+FB_SS_join <- FB_means %>%
+  inner_join(SS_means, by = "site", suffix = c(".FB", ".SS"))
+
+# Calcular log-ratio FB/SS para cada mineral
+BCF_log <- FB_SS_join %>%
+  transmute(
+    site,
+    across(
+      all_of(mineral_vars),
+      ~ log(.data[paste0(cur_column(), ".FB")] /
+             .data[paste0(cur_column(), ".SS")]),
+      .names = "{.col}"
+    )
+  )
+
+head(BCF_log)
+
+# PCA de los log-ratios
+BCF_pca <- prcomp(BCF_log[, mineral_vars], scale. = TRUE)
+
+summary(BCF_pca)
+
+fviz_pca_biplot(BCF_pca,
+                repel = TRUE,
+                label = "var") +
+  ggtitle("PCA – log-ratios FB/SS (BCF) por site")
+
+BCF_log$site <- as.factor(BCF_log$site)
+
+fviz_pca_ind(BCF_pca,
+             geom = "point",
+             habillage = BCF_log$site,
+             repel = TRUE) +
+  ggtitle("PCA de BCF – sites")
+
+```
+
+
+
+# EJERCICIO 3 - MDS
+
+## Ejercicio 3.a MDS con composición mineral de FB (medias por site)
+
+```{r}
+# Usamos FB_means (ya calculado) y solo las columnas de minerales
+FB_means_only <- FB_means[, mineral_vars]
+
+# Distancia de Bray-Curtis
+fb_dist <- vegdist(FB_means_only, method = "bray")
+
+# MDS no métrico (metaMDS)
+set.seed(123)
+fb_mds <- metaMDS(fb_dist, k = 2, trymax = 100)
+
+fb_mds  # resumen del ajuste
+```
+
+
+## Ejercicio 3.b Gráfico MDS en 2D con regiones
+
+```{r}
+# Suponemos que 'composition.df' tiene columna 'Region'
+# Si se llama distinto, cámbialo aquí.
+site_region <- composition.df %>%
+  group_by(site) %>%
+  summarise(Region = first(Region))
+
+# Extraer coordenadas del MDS
+mds_scores <- as.data.frame(scores(fb_mds, display = "sites"))
+mds_scores$site <- FB_means$site
+
+# Añadir info de región
+mds_plot_data <- mds_scores %>%
+  left_join(site_region, by = "site")
+
+ggplot(mds_plot_data, aes(x = MDS1, y = MDS2, color = Region, label = site)) +
+  geom_point(size = 3) +
+  geom_text(vjust = -0.5, size = 3) +
+  theme_bw() +
+  labs(
+    title = "MDS (Bray–Curtis) de composición mineral en FB",
+    x = "Dimensión 1",
+    y = "Dimensión 2"
+  )
+```
+
+
+
+# EJERCICIO 4 - Analisis de Correspondencia
+
+## Ejercicio 4.a Medias de Moisture, Organic, Minerals por site y ajuste a suma 100
+
+```{r}
+comp_means <- composition.df %>%
+  group_by(site) %>%
+  summarise(
+    across(all_of(macro_vars), ~mean(.x, na.rm = TRUE))
+  )
+
+# Ajustar cada fila para que Moisture + Organic + Minerals = 100
+comp_adj <- comp_means %>%
+  rowwise() %>%
+  mutate(
+    total = sum(c_across(all_of(macro_vars)), na.rm = TRUE),
+    Moisture = Moisture / total * 100,
+    Organic  = Organic  / total * 100,
+    Minerals = Minerals / total * 100
+  ) %>%
+  ungroup() %>%
+  select(-total)
+
+head(comp_adj)
+```
+
+## Ejercicio 4.b CA sobre las composiciones ajustadas
+
+```{r}
+# Matriz sites x componentes
+comp_mat <- as.data.frame(comp_adj)
+rownames(comp_mat) <- comp_mat$site
+comp_mat <- comp_mat[, macro_vars]
+
+# Opción 1: paquete 'ca'
+ca_res <- ca(comp_mat)
+summary(ca_res)
+
+plot(ca_res,
+     main = "CA – Composición en peso fresco de FB (Moisture, Organic, Minerals)")
+
+# Opción 2: FactoMineR + factoextra (por si prefieres estos gráficos)
+CA_res <- FactoMineR::CA(comp_mat, graph = FALSE)
+
+fviz_ca_biplot(CA_res,
+               repel = TRUE) +
+  ggtitle("CA – Biplot sites x componentes (Moisture, Organic, Minerals)")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
